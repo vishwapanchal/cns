@@ -140,3 +140,126 @@ class DiffieHellman {
 }
 
 ====================================================================
+CRC
+
+import java.util.*;
+
+class CRC {
+
+    // XOR operation
+    static String xor(String a, String b) {
+        String result = "";
+        for (int i = 1; i < b.length(); i++) {
+            if (a.charAt(i) == b.charAt(i))
+                result += "0";
+            else
+                result += "1";
+        }
+        return result;
+    }
+
+    // Division (mod-2)
+    static String mod2div(String dividend, String divisor) {
+        int len = divisor.length();
+        String temp = dividend.substring(0, len);
+
+        for (int i = len; i < dividend.length(); i++) {
+            if (temp.charAt(0) == '1')
+                temp = xor(divisor, temp) + dividend.charAt(i);
+            else
+                temp = xor("0".repeat(len), temp) + dividend.charAt(i);
+        }
+
+        if (temp.charAt(0) == '1')
+            temp = xor(divisor, temp);
+        else
+            temp = xor("0".repeat(len), temp);
+
+        return temp;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter dividend: ");
+        String dividend = sc.next();
+
+        String divisor = "10001000000100001";
+
+        // append zeros
+        String appended = dividend;
+        for (int i = 0; i < divisor.length() - 1; i++) {
+            appended += "0";
+        }
+
+        String remainder = mod2div(appended, divisor);
+        String codeword = dividend + remainder;
+
+        System.out.println("Checksum: " + remainder);
+        System.out.println("Codeword: " + codeword);
+
+        // error check
+        System.out.print("Check error? (0/1): ");
+        int choice = sc.nextInt();
+
+        if (choice == 0) {
+            System.out.print("Enter received data: ");
+            String received = sc.next();
+
+            String check = mod2div(received, divisor);
+
+            if (check.contains("1"))
+                System.out.println("Error detected");
+            else
+                System.out.println("No error");
+        }
+    }
+}
+
+============================================================
+
+RSA
+import java.util.*;
+
+class RSA {
+
+    static int modPower(int base, int exponent, int mod) {
+        int result = 1;
+        for (int i = 0; i < exponent; i++) {
+            result = (result * base) % mod;
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter prime numbers p and q: ");
+        int p = sc.nextInt();
+        int q = sc.nextInt();
+
+        int n = p * q;
+        int phi = (p - 1) * (q - 1);
+
+        System.out.print("Enter public key e: ");
+        int e = sc.nextInt();
+
+        // find private key d
+        int d = 1;
+        while ((d * e) % phi != 1) {
+            d++;
+        }
+
+        System.out.print("Enter message: ");
+        int message = sc.nextInt();
+
+        int encrypted = modPower(message, e, n);
+        int decrypted = modPower(encrypted, d, n);
+
+        System.out.println("Encrypted: " + encrypted);
+        System.out.println("Decrypted: " + decrypted);
+    }
+}
+
+==============================================
+
