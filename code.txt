@@ -1,0 +1,142 @@
+LEAKY BUCKET
+
+import java.util.*;
+
+class LeakyBucket {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter bucket size: ");
+        int bucketSize = sc.nextInt();
+
+        System.out.print("Enter output rate: ");
+        int outputRate = sc.nextInt();
+
+        System.out.print("Enter number of packets: ");
+        int numPackets = sc.nextInt();
+
+        int time = 0;
+
+        for (int i = 0; i < numPackets; i++) {
+            System.out.print("Enter packet size: ");
+            int packetSize = sc.nextInt();
+
+            System.out.println("\nPacket at time " + time + " : " + packetSize);
+
+            // Overflow check
+            if (packetSize > bucketSize) {
+                System.out.println("Overflow! Packet dropped.");
+                continue;
+            }
+
+            int remaining = packetSize;
+
+            // Send data step by step
+            while (remaining > 0) {
+                int sent;
+
+                if (remaining >= outputRate)
+                    sent = outputRate;
+                else
+                    sent = remaining;
+
+                remaining -= sent;
+                time++;
+
+                System.out.println("Time " + time + " sent : " + sent + " left : " + remaining);
+            }
+        }
+    }
+}
+
+================================================================================================
+
+VIGNERE
+
+import java.util.*;
+
+class Vigenere {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter text: ");
+        String text = sc.next().toUpperCase();
+
+        System.out.print("Enter key: ");
+        String key = sc.next().toUpperCase();
+
+        System.out.print("1.Encrypt 2.Decrypt: ");
+        int mode = sc.nextInt();
+
+        String result = "";
+
+        for (int i = 0; i < text.length(); i++) {
+            char textChar = text.charAt(i);
+            char keyChar = key.charAt(i % key.length());
+
+            int textValue = textChar - 'A';
+            int keyValue = keyChar - 'A';
+
+            int outputValue;
+
+            if (mode == 1) { // Encrypt
+                outputValue = (textValue + keyValue) % 26;
+            } else { // Decrypt
+                outputValue = (textValue - keyValue + 26) % 26;
+            }
+
+            char outputChar = (char)(outputValue + 'A');
+            result += outputChar;
+        }
+
+        System.out.println("Result: " + result);
+    }
+}
+
+================================================================================================
+
+DIFFIE HIEMAN
+
+import java.util.*;
+
+class DiffieHellman {
+
+    static int modPower(int base, int exponent, int mod) {
+        int result = 1;
+        for (int i = 0; i < exponent; i++) {
+            result = (result * base) % mod;
+        }
+        return result;
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter prime number p: ");
+        int p = sc.nextInt();
+
+        System.out.print("Enter generator g: ");
+        int g = sc.nextInt();
+
+        System.out.print("Enter private key of A: ");
+        int privateA = sc.nextInt();
+
+        System.out.print("Enter private key of B: ");
+        int privateB = sc.nextInt();
+
+        // Public keys
+        int publicA = modPower(g, privateA, p);
+        int publicB = modPower(g, privateB, p);
+
+        // Shared secret keys
+        int sharedKeyA = modPower(publicB, privateA, p);
+        int sharedKeyB = modPower(publicA, privateB, p);
+
+        System.out.println("Public key of A: " + publicA);
+        System.out.println("Public key of B: " + publicB);
+        System.out.println("Shared key (A): " + sharedKeyA);
+        System.out.println("Shared key (B): " + sharedKeyB);
+    }
+}
+
+====================================================================
