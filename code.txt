@@ -262,4 +262,133 @@ class RSA {
 }
 
 ==============================================
+CAESER
+
+import java.util.*;
+
+class Caesar {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter text: ");
+        String text = sc.nextLine();
+
+        System.out.print("Enter key: ");
+        int key = sc.nextInt();
+
+        System.out.print("1.Encrypt 2.Decrypt: ");
+        int mode = sc.nextInt();
+
+        String result = "";
+
+        if (mode == 2) key = 26 - key;
+
+        for (int i = 0; i < text.length(); i++) {
+            char ch = text.charAt(i);
+
+            if (Character.isLetter(ch)) {
+                char base;
+
+                if (Character.isUpperCase(ch))
+                    base = 'A';
+                else
+                    base = 'a';
+
+                ch = (char)((ch - base + key) % 26 + base);
+            }
+
+            result += ch;
+        }
+
+        System.out.println("Result: " + result);
+    }
+}
+
+==============================================================================
+PLAYFAIR
+
+import java.util.*;
+
+class Playfair {
+    static char[][] mat = new char[5][5];
+
+    static void createMatrix(String key) {
+        boolean used[] = new boolean[26];
+        key = key.toLowerCase();
+        int k = 0;
+
+        for (int i = 0; i < key.length(); i++) {
+            char ch = key.charAt(i);
+            if (ch == 'j') ch = 'i';
+
+            if (!used[ch - 'a']) {
+                mat[k / 5][k % 5] = ch;
+                used[ch - 'a'] = true;
+                k++;
+            }
+        }
+
+        for (char ch = 'a'; ch <= 'z'; ch++) {
+            if (ch == 'j') continue;
+
+            if (!used[ch - 'a']) {
+                mat[k / 5][k % 5] = ch;
+                k++;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter key: ");
+        String key = sc.next();
+
+        System.out.print("Enter text: ");
+        String text = sc.next();
+
+        System.out.print("1.Encrypt 2.Decrypt: ");
+        int mode = sc.nextInt();
+
+        createMatrix(key);
+
+        String result = "";
+        int shift = (mode == 1) ? 1 : 4;
+
+        for (int i = 0; i < text.length(); i += 2) {
+            char a = text.charAt(i);
+            char b = text.charAt(i + 1);
+
+            if (a == 'j') a = 'i';
+            if (b == 'j') b = 'i';
+
+            int r1 = 0, c1 = 0, r2 = 0, c2 = 0;
+
+            for (int r = 0; r < 5; r++) {
+                for (int c = 0; c < 5; c++) {
+                    if (mat[r][c] == a) { r1 = r; c1 = c; }
+                    if (mat[r][c] == b) { r2 = r; c2 = c; }
+                }
+            }
+
+            if (r1 == r2) {
+                result += mat[r1][(c1 + shift) % 5];
+                result += mat[r2][(c2 + shift) % 5];
+            }
+            else if (c1 == c2) {
+                result += mat[(r1 + shift) % 5][c1];
+                result += mat[(r2 + shift) % 5][c2];
+            }
+            else {
+                result += mat[r1][c2];
+                result += mat[r2][c1];
+            }
+        }
+
+        System.out.println("Result: " + result);
+    }
+}
+
+
+==============================================================================
 
